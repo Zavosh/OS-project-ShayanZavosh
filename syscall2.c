@@ -2,6 +2,20 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+/* CPU ticks since boot time in stat file divide into some types of processes described respectively:
+ * user: normal processes executing in user mode
+ * nice: niced processes executing in user mode
+ * system: processes executing in kernel mode
+ * idle: twiddling thumbs
+ * iowait: waiting for I/O to complete
+ * irq: servicing interrupts
+ * softirq: servicing softirqs
+ * steal: involuntary wait
+ * guest: running a normal guest
+ * guest_nice: running a niced guest
+ * The ticks corresponding to processes in types of "idle" and "iowait" are not considered in computing CPU usage.
+*/
+
 int main()
 {
 	long double arr1[10], arr2[10], fraction;
