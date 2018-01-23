@@ -1,0 +1,34 @@
+diff -uNr linux-4.14.14/kernel/sched/core.c linux-4.14.14Zavosh/kernel/sched/core.c
+--- linux-4.14.14/kernel/sched/core.c	2018-01-17 12:15:30.000000000 +0330
++++ linux-4.14.14Zavosh/kernel/sched/core.c	2018-01-22 19:59:47.734949188 +0330
+@@ -2343,7 +2343,16 @@
+ 	/*
+ 	 * Make sure we do not leak PI boosting priority to the child.
+ 	 */
+-	p->prio = current->normal_prio;
++	// p->prio = current->normal_prio;
++	/* Zavosh Mottahedeh: force policy to FIFO */
++	    if (p->policy == SCHED_NORMAL) {
++		p->prio = current->normal_prio - NICE_WIDTH -
++	          	PRIO_TO_NICE(current->static_prio);
++	        p->normal_prio = p->prio;
++	        p->rt_priority = p->prio;
++	        p->policy = SCHED_FIFO;
++	        p->static_prio = NICE_TO_PRIO(0);
++	    }
+ 
+ 	/*
+ 	 * Revert to default priority/policy on fork if requested.
+@@ -4250,6 +4259,12 @@
+ 		.sched_priority = param->sched_priority,
+ 		.sched_nice	= PRIO_TO_NICE(p->static_prio),
+ 	};
++	/* Zavosh Mottahedeh: force policy of process to FIFO */
++	if (attr.sched_policy == SCHED_NORMAL) {
++		attr.sched_priority = param->sched_priority -
++			NICE_WIDTH - attr.sched_nice;
++		attr.sched_policy = SCHED_FIFO;
++	}
+ 
+ 	/* Fixup the legacy SCHED_RESET_ON_FORK hack. */
+ 	if ((policy != SETPARAM_POLICY) && (policy & SCHED_RESET_ON_FORK)) {
