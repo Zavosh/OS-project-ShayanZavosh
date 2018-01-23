@@ -44,18 +44,20 @@ int main(int argc, char* argv[]){
 		pid_t pid = fork();
 		if (pid == 0) { 
 			if ((strcmp(arguments[0], "echo") == 0) && (flag_redirect == 1)) {
-				fprintf(stderr, "%c\n", arguments[1][1]);
-				fprintf(stderr, "%d and %d\n", strlen(arguments[0]), strlen(arguments[1]));
-				char* new_arg[1];
-				new_arg[0] = (char*) malloc((strlen(arguments[0]) + 1) * sizeof(char));
-				new_arg[1] = (char*) malloc((strlen(arguments[1]) + 1) * sizeof(char));
-				strcpy(new_arg[0], arguments[0]);
-				strcpy(new_arg[1], arguments[1]);
+				//fprintf(stderr, "%c\n", arguments[1][1]);
+				//fprintf(stderr, "%d and %d\n", strlen(arguments[0]), strlen(arguments[1]));
+				char** new_arg = (char**) malloc(sizeof(char*) * 2);
+				//new_arg[0] = (char*) malloc((strlen(arguments[0]) + 1) * sizeof(char));
+				//new_arg[1] = (char*) malloc((strlen(arguments[1]) + 1) * sizeof(char));
+				new_arg[0] = arguments[0];
+				new_arg[1] = arguments[1];
+				//fprintf(stderr, "%s and %s\n", new_arg[0], new_arg[1]);
 				int fd = open(arguments[3], O_CREAT | O_RDWR, S_IRWXU);
 				dup2(fd, 1);
-				dup2(fd, 2);
+				//dup2(fd, 2);
 				close(fd);
-				execvp(arguments[0], new_arg);
+				execvp(new_arg[0], new_arg);
+				//fprintf(stderr, "%d\n", k);
 				fprintf(stderr, "No such program");
 			} else {
 				execvp(arguments[0], arguments);
